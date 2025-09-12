@@ -61,13 +61,13 @@ import { User } from '../../models/user.model';
         <!-- Main Content -->
         <mat-sidenav-content class="main-content">
           <!-- Top Toolbar -->
-          <mat-toolbar color="primary" class="top-toolbar">
+          <mat-toolbar class="top-toolbar">
             <span class="toolbar-spacer"></span>
             
             <div class="user-menu">
               <button mat-button [matMenuTriggerFor]="userMenu" class="user-button">
                 <mat-icon>account_circle</mat-icon>
-                <span *ngIf="currentUser">{{currentUser.person?.name}}</span>
+                <span *ngIf="currentUser" class="user-name">{{currentUser.person?.name}}</span>
                 <mat-icon>arrow_drop_down</mat-icon>
               </button>
               
@@ -170,8 +170,9 @@ import { User } from '../../models/user.model';
 
     .sidenav {
       width: 280px;
-      background: #f5f5f5;
+      background: #ffffff;
       border-right: 1px solid #e0e0e0;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
     }
 
     .sidenav-header {
@@ -184,22 +185,62 @@ import { User } from '../../models/user.model';
     .sidenav-header h2 {
       margin: 0;
       font-size: 1.5rem;
+      font-weight: 600;
+      color: white;
     }
 
     .sidenav-header p {
       margin: 5px 0 0 0;
-      opacity: 0.8;
+      opacity: 0.9;
+      color: white;
+    }
+
+    /* Estilos mejorados para los elementos del menú */
+    .mat-mdc-list-item {
+      color: #333 !important;
+    }
+
+    .mat-mdc-list-item .mdc-list-item__primary-text {
+      color: #333 !important;
+      font-weight: 500;
+    }
+
+    .mat-mdc-list-item mat-icon {
+      color: #667eea !important;
+    }
+
+    .mat-mdc-list-item:hover {
+      background-color: rgba(102, 126, 234, 0.08) !important;
+    }
+
+    .mat-mdc-list-item.active {
+      background-color: rgba(102, 126, 234, 0.15) !important;
+      border-right: 3px solid #667eea;
+    }
+
+    .mat-mdc-list-item.active .mdc-list-item__primary-text {
+      color: #667eea !important;
+      font-weight: 600;
+    }
+
+    .mat-mdc-list-item.active mat-icon {
+      color: #667eea !important;
     }
 
     .main-content {
       height: 100%;
       overflow-y: auto;
+      background: #f8f9fa;
     }
 
     .top-toolbar {
       position: sticky;
       top: 0;
       z-index: 1000;
+      background: #ffffff;
+      color: #333;
+      border-bottom: 1px solid #e0e0e0;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
     .toolbar-spacer {
@@ -210,11 +251,24 @@ import { User } from '../../models/user.model';
       display: flex;
       align-items: center;
       gap: 8px;
+      color: #333 !important;
+      font-weight: 500;
+    }
+
+    .user-button mat-icon {
+      color: #667eea !important;
+    }
+
+    .user-name {
+      color: #333 !important;
+      font-weight: 600;
+      font-size: 0.95rem;
     }
 
     .dashboard-content {
       padding: 20px;
       min-height: calc(100vh - 64px);
+      background: #f8f9fa;
     }
 
     .welcome-content {
@@ -231,11 +285,14 @@ import { User } from '../../models/user.model';
       font-size: 2.5rem;
       color: #333;
       margin-bottom: 10px;
+      font-weight: 700;
+      text-shadow: none;
     }
 
     .welcome-header p {
       font-size: 1.2rem;
-      color: #666;
+      color: #555;
+      font-weight: 400;
     }
 
     .dashboard-cards {
@@ -249,15 +306,37 @@ import { User } from '../../models/user.model';
       cursor: pointer;
       transition: all 0.3s ease;
       height: 200px;
+      background: #ffffff;
+      border: 1px solid #e0e0e0;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
 
     .dashboard-card:hover {
       transform: translateY(-5px);
       box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+      border-color: #667eea;
     }
 
     .dashboard-card mat-card-header {
       margin-bottom: 15px;
+    }
+
+    .dashboard-card mat-card-title {
+      color: #333 !important;
+      font-weight: 600;
+      font-size: 1.1rem;
+    }
+
+    .dashboard-card mat-card-subtitle {
+      color: #666 !important;
+      font-size: 0.9rem;
+    }
+
+    .dashboard-card mat-card-content p {
+      color: #555 !important;
+      line-height: 1.5;
+      font-size: 0.95rem;
     }
 
     .dashboard-card mat-icon[mat-card-avatar] {
@@ -272,6 +351,11 @@ import { User } from '../../models/user.model';
       color: white;
     }
 
+    .dashboard-card button {
+      font-weight: 500;
+      color: #333;
+    }
+
     .active {
       background-color: rgba(102, 126, 234, 0.1) !important;
       color: #667eea !important;
@@ -281,13 +365,81 @@ import { User } from '../../models/user.model';
       color: #667eea !important;
     }
 
+    /* Mejoras adicionales para la legibilidad */
+    mat-nav-list a {
+      color: #333 !important;
+      text-decoration: none;
+    }
+
+    mat-nav-list a:hover {
+      background-color: rgba(102, 126, 234, 0.08) !important;
+    }
+
+    mat-nav-list a span {
+      color: #333 !important;
+      font-weight: 500;
+    }
+
+    mat-nav-list a.active span {
+      color: #667eea !important;
+      font-weight: 600;
+    }
+
+    /* Estilos para el menú del usuario */
+    .mat-mdc-menu-panel {
+      background: white !important;
+    }
+
+    .mat-mdc-menu-item {
+      color: #333 !important;
+    }
+
+    .mat-mdc-menu-item mat-icon {
+      color: #667eea !important;
+    }
+
+    .mat-mdc-menu-item:hover {
+      background-color: rgba(102, 126, 234, 0.08) !important;
+    }
+
     @media (max-width: 768px) {
       .sidenav {
         width: 100%;
+        background: white;
       }
       
       .dashboard-cards {
         grid-template-columns: 1fr;
+      }
+
+      .welcome-header h1 {
+        font-size: 2rem;
+        color: #333;
+      }
+
+      .welcome-header p {
+        color: #555;
+      }
+
+      .dashboard-card mat-card-title {
+        color: #333 !important;
+      }
+
+      .dashboard-card mat-card-subtitle {
+        color: #666 !important;
+      }
+
+      .dashboard-card mat-card-content p {
+        color: #555 !important;
+      }
+
+      .user-name {
+        display: none;
+      }
+
+      .sidenav-header h2,
+      .sidenav-header p {
+        color: white !important;
       }
     }
   `]

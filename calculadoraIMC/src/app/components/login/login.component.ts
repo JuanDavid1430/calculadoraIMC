@@ -37,14 +37,11 @@ import { LoginRequest } from '../../models/auth.model';
         <mat-card-content>
           <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
             <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Email</mat-label>
-              <input matInput type="email" formControlName="email" required>
-              <mat-icon matSuffix>email</mat-icon>
+              <mat-label>Usuario</mat-label>
+              <input matInput type="text" formControlName="email" required>
+              <mat-icon matSuffix>person</mat-icon>
               <mat-error *ngIf="loginForm.get('email')?.hasError('required')">
-                El email es requerido
-              </mat-error>
-              <mat-error *ngIf="loginForm.get('email')?.hasError('email')">
-                Ingrese un email válido
+                El usuario es requerido
               </mat-error>
             </mat-form-field>
 
@@ -154,7 +151,7 @@ export class LoginComponent implements OnInit {
     private snackBar: MatSnackBar
   ) {
     this.loginForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
+      email: ['', [Validators.required]],
       password: ['', [Validators.required]]
     });
   }

@@ -70,22 +70,24 @@ import { IMCRequest, IMCResponse } from '../../models/imc.model';
                 </mat-form-field>
 
                 <mat-form-field appearance="outline" class="half-width">
-                  <mat-label>Altura (cm)</mat-label>
+                  <mat-label>Altura (m)</mat-label>
                   <input matInput 
                          type="number" 
                          formControlName="height" 
-                         min="100"
-                         max="250"
+                         step="0.01"
+                         min="1.0"
+                         max="2.5"
+                         placeholder="Ej: 1.75"
                          required>
                   <mat-icon matSuffix>height</mat-icon>
                   <mat-error *ngIf="calculatorForm.get('height')?.hasError('required')">
                     La altura es requerida
                   </mat-error>
                   <mat-error *ngIf="calculatorForm.get('height')?.hasError('min')">
-                    Altura mínima: 100 cm
+                    Altura mínima: 1.0 m
                   </mat-error>
                   <mat-error *ngIf="calculatorForm.get('height')?.hasError('max')">
-                    Altura máxima: 250 cm
+                    Altura máxima: 2.5 m
                   </mat-error>
                 </mat-form-field>
               </div>
@@ -139,7 +141,7 @@ import { IMCRequest, IMCResponse } from '../../models/imc.model';
               </div>
               <div class="detail-item">
                 <span class="label">Altura:</span>
-                <span class="value">{{result.height}} cm</span>
+                <span class="value">{{result.height}} m</span>
               </div>
               <div class="detail-item">
                 <span class="label">Fecha:</span>
@@ -449,7 +451,7 @@ export class CalculatorComponent implements OnInit {
   ) {
     this.calculatorForm = this.fb.group({
       weight: ['', [Validators.required, Validators.min(30), Validators.max(300)]],
-      height: ['', [Validators.required, Validators.min(100), Validators.max(250)]]
+      height: ['', [Validators.required, Validators.min(1.0), Validators.max(2.5)]]
     });
   }
 

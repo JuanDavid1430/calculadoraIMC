@@ -1,35 +1,116 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { Observable, BehaviorSubject, of, throwError } from 'rxjs';
+import { tap, delay } from 'rxjs/operators';
 import { LoginRequest, LoginResponse, RegisterRequest, RegisterResponse } from '../models/auth.model';
 import { User } from '../models/user.model';
-import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = environment.apiUrl;
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
-  constructor(private http: HttpClient) {
+  // Array en memoria para almacenar usuarios
+  private users: User[] = [
+    {
+      id: 1,
+      email: 'admin',
+      password: '12345',
+      idPerson: 1,
+      person: {
+        id: 1,
+        name: 'Admin',
+        lastname: 'SmithStrong',
+        age: 30,
+        gender: 'M'
+      }
+    }
+  ];
+
+  private nextUserId = 2;
+  private nextPersonId = 2;
+
+  constructor() {
     this.loadCurrentUser();
   }
 
   login(credentials: LoginRequest): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.apiUrl}/auth/login`, credentials)
-      .pipe(
+    // Simular búsqueda en array
+    const user = this.users.find(u => 
+      u.email === credentials.email && u.password === credentials.password
+    );
+
+    if (user) {
+      // Generar token simulado
+      const token = this.generateToken(user);
+      
+      const response: LoginResponse = {
+        token: token,
+        user: {
+          id: user.id!,
+          email: user.email,
+          idPerson: user.idPerson,
+          image: user.image,
+          person: {
+            id: user.person!.id!,
+            name: user.person!.name,
+            lastname: user.person!.lastname,
+            age: user.person!.age,
+            gender: user.person!.gender,
+            idDisability: user.person!.idDisability,
+            disability: user.person!.disability
+          }
+        }
+      };
+
+      return of(response).pipe(
+        delay(500), // Simular delay de red
         tap(response => {
           this.setToken(response.token);
-          this.currentUserSubject.next(response.user);
+          this.currentUserSubject.next({
+            ...user,
+            password: undefined // No exponer la contraseña
+          } as User);
         })
       );
+    } else {
+      return throwError(() => new Error('Credenciales inválidas')).pipe(delay(500));
+    }
   }
 
   register(userData: RegisterRequest): Observable<RegisterResponse> {
-    return this.http.post<RegisterResponse>(`${this.apiUrl}/auth/register`, userData);
+    // Verificar si el email ya existe
+    const existingUser = this.users.find(u => u.email === userData.email);
+    
+    if (existingUser) {
+      return throwError(() => new Error('El email ya está registrado')).pipe(delay(500));
+    }
+
+    // Crear nuevo usuario
+    const newUser: User = {
+      id: this.nextUserId++,
+      email: userData.email,
+      password: userData.password,
+      idPerson: this.nextPersonId++,
+      person: {
+        id: this.nextPersonId - 1,
+        ...userData.person
+      }
+    };
+
+    // Agregar al array
+    this.users.push(newUser);
+
+    const response: RegisterResponse = {
+      message: 'Usuario registrado exitosamente',
+      user: {
+        id: newUser.id!,
+        email: newUser.email
+      }
+    };
+
+    return of(response).pipe(delay(500));
   }
 
   logout(): void {
@@ -56,8 +137,37 @@ export class AuthService {
   private loadCurrentUser(): void {
     const token = this.getToken();
     if (token) {
-      // Aquí podrías hacer una llamada al backend para obtener los datos del usuario actual
-      // Por ahora, solo mantenemos el estado de autenticación
+      // Simular decodificación del token para obtener el usuario
+      try {
+        const userData = JSON.parse(atob(token.split('.')[1]));
+        const user = this.users.find(u => u.id === userData.userId);
+        if (user) {
+          this.currentUserSubject.next({
+            ...user,
+            password: undefined
+          } as User);
+        }
+      } catch (error) {
+        // Token inválido, limpiar
+        this.logout();
+      }
     }
+  }
+
+  private generateToken(user: User): string {
+    // Simular generación de JWT
+    const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
+    const payload = btoa(JSON.stringify({ 
+      userId: user.id, 
+      email: user.email, 
+      exp: Date.now() + (24 * 60 * 60 * 1000) // 24 horas
+    }));
+    const signature = btoa('smithstrong-secret-key');
+    return `${header}.${payload}.${signature}`;
+  }
+
+  // Método para obtener todos los usuarios (útil para desarrollo)
+  getAllUsers(): User[] {
+    return this.users.map(user => ({ ...user, password: undefined } as User));
   }
 }

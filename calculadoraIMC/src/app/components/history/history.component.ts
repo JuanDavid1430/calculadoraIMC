@@ -142,7 +142,7 @@ import { History } from '../../models/imc.model';
                   <td mat-cell *matCellDef="let element">
                     <div class="metric-cell">
                       <mat-icon>height</mat-icon>
-                      <span>{{element.height}} cm</span>
+                      <span>{{element.height}} m</span>
                     </div>
                   </td>
                 </ng-container>
@@ -473,24 +473,27 @@ export class HistoryComponent implements OnInit {
         id: 1,
         idUser: 1,
         weight: 75,
-        height: 175,
+        height: 1.75,
         imc: 24.49,
+        classification: this.getIMCClassification(24.49),
         createdDate: new Date('2024-01-15')
       },
       {
         id: 2,
         idUser: 1,
         weight: 73,
-        height: 175,
+        height: 1.75,
         imc: 23.84,
+        classification: this.getIMCClassification(23.84),
         createdDate: new Date('2024-02-15')
       },
       {
         id: 3,
         idUser: 1,
         weight: 72,
-        height: 175,
+        height: 1.75,
         imc: 23.51,
+        classification: this.getIMCClassification(23.51),
         createdDate: new Date('2024-03-15')
       }
     ];
